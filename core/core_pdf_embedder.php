@@ -12,10 +12,6 @@ class core_pdf_embedder {
 	}
 	
 	public function pdfemb_wp_enqueue_scripts() {
-		wp_register_script( 'pdfemb_embed_pdf_js', $this->my_plugin_url().'js/pdfemb-embed-pdf.js', array('jquery') );
-		wp_localize_script( 'pdfemb_embed_pdf_js', 'pdfemb_trans', $this->get_translation_array() );
-		
-		wp_register_script( 'pdfemb_pdf_js', $this->my_plugin_url().'js/pdfjs/pdf.js');
 	}
 	
 	protected $inserted_scripts = false;
@@ -47,14 +43,23 @@ class core_pdf_embedder {
 		return $existing_mimes;
 	}
 	
+	public function pdfemb_post_mime_types($post_mime_types) {
+		$post_mime_types['application/pdf'] = array( __( 'PDFs' ), __( 'Manage PDFs' ), _n_noop( 'PDF <span class="count">(%s)</span>', 'PDFs <span class="count">(%s)</span>' ) );
+		return $post_mime_types;
+	}
+	
 	// Embed PDF shortcode instead of link
-	public function pdfemb_media_insert($html, $id, $attachment) {
+	public function pdfemb_media_send_to_editor($html, $id, $attachment) {
 		if (preg_match( "/\.pdf$/i", $attachment['url'])) {
 			return '[pdf-embedder url="' . $attachment['url'] . '"]';
 		} else {
 			return $html;
 		}
 	}
+	
+	/* public function pdfemb_wp_get_attachment_link( $link, $id, $size, $permalink, $icon, $text ) {
+		return $link;
+	}*/
 
 	public function pdfemb_shortcode_display_pdf($atts, $content=null) {
 		if (!isset($atts['url'])) {
@@ -147,8 +152,13 @@ class core_pdf_embedder {
 	
 	// Override elsewhere
 	protected function pdfemb_mainsection_text() {
+		?>
+		<p>There are no settings to configure in PDF Embedder.</p>
+		<p>To use the plugin, just embed PDFs in the same way as you would normally embed images in your posts/pages - but try with a PDF file instead.</p>
+		<p>From the post editor, click Add Media, and then drag-and-drop your PDF file into the media library. 
+		When you insert the PDF into your post, it will automatically embed using the plugin's viewer.</p>
+		<?php
 	}
-
 	
 	protected function pdfemb_options_submit() {
 	?>
@@ -260,10 +270,13 @@ class core_pdf_embedder {
 	public function pdfemb_admin_init() {
 		// Add PDF as a supported upload type to Media Gallery
 		add_filter( 'upload_mimes', array($this, 'pdfemb_upload_mimes') );
+		
+		// Filter for PDFs in Media Gallery
+		add_filter( 'post_mime_types', array($this, 'pdfemb_post_mime_types') );
 
 		// Embed PDF shortcode instead of link
-		add_filter( 'media_send_to_editor', array($this, 'pdfemb_media_insert'), 20, 3 );
-
+		add_filter( 'media_send_to_editor', array($this, 'pdfemb_media_send_to_editor'), 20, 3 );
+		
 		register_setting( $this->get_options_pagename(), $this->get_options_name(), Array($this, 'pdfemb_options_validate') );
 	}
 	
@@ -271,6 +284,9 @@ class core_pdf_embedder {
 		
 		add_action( 'wp_enqueue_scripts', array($this, 'pdfemb_wp_enqueue_scripts'), 5, 0 );
 		add_shortcode( 'pdf-embedder', Array($this, 'pdfemb_shortcode_display_pdf') );
+		
+		// When viewing attachment page, embded document instead of link
+		// add_filter( 'wp_get_attachment_link', array($this, 'pdfemb_wp_get_attachment_link'), 20, 6 );
 		
 		if (is_admin()) {
 			add_action( 'admin_init', array($this, 'pdfemb_admin_init'), 5, 0 );

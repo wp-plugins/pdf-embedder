@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: doc, docx, pdf, office, powerpoint, google, document, embed, intranet
 Requires at least: 3.3
 Tested up to: 4.1
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -39,7 +39,7 @@ If you also specify a fixed height, the document may be cut off vertically and w
 
 == Screenshots ==
 
-1. Uploaded PDF is displayed within your document at the correct size to fit. 
+1. Uploaded PDF is displayed within your page/post at the correct size to fit. 
 2. User hovers over document to see Next/Prev page butons.
 
 == Frequently Asked Questions ==
@@ -69,6 +69,10 @@ the Plugins section of your Wordpress admin
 1. Follow the instructions from step 4 above
 
 == Changelog ==
+
+= 1.0.1 =
+
+Added usage instructions within the settings page.
 
 = 1.0 =
 First version
