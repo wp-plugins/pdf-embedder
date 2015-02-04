@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: doc, docx, pdf, office, powerpoint, google, document, embed, intranet
 Requires at least: 3.3
 Tested up to: 4.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,13 +29,22 @@ When you insert into your post, it will appear in the editor as a 'shortcode' as
 
 You can optionally override width and height as follows:
 
-[pdf-embedder url="https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf" width="500" height="700"]
+[pdf-embedder url="https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf" width="auto"]
 
-Note the default values for width and height are "auto" (i.e. if omitted).
+Note the default value for width is 'max'.
 
-If you enter a fixed width (as a number), and leave height as auto, then height will be calculated automatically so the document fits. 
-If you also specify a fixed height, the document may be cut off vertically and will need to be scrolled to see the whole page.
+Resizing works as follows:
 
+* If width='max' the width will take as much space as possible within its parent container (e.g. column within your page).
+* If width='auto' the width will be equal to the 'natural' width of the PDF document contents (i.e. however width the PDF says it should be by default).
+* If width is a number (e.g. width='500') then it will display at that number of pixels wide.
+
+**In all cases, if the parent container is narrower than the width calculated above, then the document width will be reduced to the size of the container.**
+
+The height will be calculated so that the document fits naturally, given the width already calculated.
+
+It is possible to specify a fixed height (e.g. height="200"), in which case the document may be cut off vertically and will need to be scrolled to see the whole page. 
+The height will be reduced to fit if it is larger than needed to display the document correctly. 
 
 == Screenshots ==
 
@@ -69,6 +78,10 @@ the Plugins section of your Wordpress admin
 1. Follow the instructions from step 4 above
 
 == Changelog ==
+
+= 1.0.2 =
+
+Minified Javascript code. Default width/height (now "max") expands to fill parent container width regardless of the natural size of the document. Use width="auto" to obtain the old behavior.
 
 = 1.0.1 =
 

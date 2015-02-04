@@ -1,39 +1,46 @@
 
 // JQuery Plugin
-
-(function( $ ) {
- 
+jQuery(document).ready(function ($) {
+	
     $.fn.pdfEmbedder = function() {
     	
     	this.each(function(index, rawDivContainer) {
     	
     		var divContainer = $(rawDivContainer);
-	    	divContainer.append($('<canvas></canvas>', {class: 'the-canvas'})); //style: 'border:1px solid black', 
+	    	divContainer.append($('<canvas></canvas>', {'class': 'the-canvas'})); //style: 'border:1px solid black', 
 	    	
 	    	var url = divContainer.attr('data-pdf-url');
 	    	
-	    	  /**
-	    	   * Asynchronously downloads PDF.
-	    	   */
-	    	  PDFJS.getDocument(url).then(function (pdfDoc_) {
-	    		divContainer.data('pdfDoc', pdfDoc_);
-	    	    //document.getElementById('page_count').textContent = this.pdfDoc.numPages;
-	
-	    	    //$.fn.pdfEmbedder.addToolbar(divContainer, true);
-	    	    $.fn.pdfEmbedder.addToolbar(divContainer, false);
-	    	    
-	    	 // Initial/first page rendering
-	    	    divContainer.data('pageNum', 1);
-	    	    divContainer.data('pageNumPending', null);
-	    	    $.fn.pdfEmbedder.renderPage(divContainer, 1);
-	    	    
-	    	    $(window).resize(function() {
-	    	    	$.fn.pdfEmbedder.queueRenderPage(divContainer, divContainer.data('pageNum'));
-	    	    });
-	    	  }, 
-	    	  function(e) { 
-	    		  divContainer.empty().append($('<div></div>', {class: 'pdfemb-errormsg'}).append(document.createTextNode(e.message)));
-	    	  });
+	    	var callback = function(pdf) {
+    			
+	  	    	  /**
+	  	    	   * Asynchronously downloads PDF.
+	  	    	   */
+
+	  	    	  PDFJS.getDocument(pdf).then(function (pdfDoc_) {
+	  	    		divContainer.data('pdfDoc', pdfDoc_);
+	  	    	    //document.getElementById('page_count').textContent = this.pdfDoc.numPages;
+	  	
+	  	    	    //$.fn.pdfEmbedder.addToolbar(divContainer, true);
+	  	    	    $.fn.pdfEmbedder.addToolbar(divContainer, false);
+	  	    	    
+	  	    	 // Initial/first page rendering
+	  	    	    divContainer.data('pageNum', 1);
+	  	    	    divContainer.data('pageNumPending', null);
+	  	    	    $.fn.pdfEmbedder.renderPage(divContainer, 1);
+	  	    	    
+	  	    	    $(window).resize(function() {
+	  	    	    	$.fn.pdfEmbedder.queueRenderPage(divContainer, divContainer.data('pageNum'));
+	  	    	    });
+	  	    	  }, 
+	  	    	  function(e) { 
+	  	    		  divContainer.empty().append($('<div></div>', {'class': 'pdfemb-errormsg'}).append(document.createTextNode(e.message)));
+	  	    	  });
+	  	    	  
+	    	};
+	    	
+	    	pdfembGetPDF(url, callback);
+
     	});
 
     	return this;
@@ -57,31 +64,61 @@
 		    var pageWidth = vp.width;
 		    var pageHeight = vp.height;
 		    
+		    if (pageWidth <= 0 || pageHeight <= 0) {
+		    	divContainer.empty().append(document.createTextNode("PDF page width or height are invalid"));
+		    }
+		    
 		    // Max out at parent container width
 		    var parentWidth = divContainer.parent().width();
-		    if (parentWidth < pageWidth) {
-		    	scale = parentWidth / pageWidth;
-		    	pageHeight = pageHeight * scale; 
-		    	pageWidth = parentWidth;
-		    }
 		    
-		    if (divContainer.data('width') == 'auto') {
-		    	canvas.width( pageWidth );
-		    	divContainer.width(pageWidth);
-		    	scale = canvas.width() / pageWidth;
+		    var wantWidth = pageWidth;
+		    var wantHeight = pageHeight;
+		    
+		    if (divContainer.data('width') == 'max') {
+		    	wantWidth = parentWidth;
+		    }
+		    else if (divContainer.data('width') == 'auto') {
+		    	wantWidth = pageWidth;
 		    }
 		    else {
-		    	canvas.width( divContainer.width() );
-		    	scale = divContainer.width() / pageWidth;
+		    	wantWidth = parseInt(divContainer.data('width'), 10);
+		    	if (isNaN(wantWidth) || wantWidth <= 0) {
+		    		wantWidth = parentWidth;
+		    	}
 		    }
 		    
-		    if (divContainer.data('height') == 'auto') {
-			    if (pageHeight > 0) {
-			    	divContainer.height(pageHeight * scale + 4);
-			    }
+		    if (wantWidth <= 0) {
+		    	wantWidth = pageWidth;
 		    }
 		    
-		    canvas.height( pageHeight * scale );
+		    // Always max at the parent container width 
+		    if (wantWidth > parentWidth && parentWidth > 0) {
+		    	wantWidth = parentWidth;
+		    }
+		    
+	    	scale = wantWidth / pageWidth;
+	    	wantHeight = pageHeight * scale; 
+
+	    	if (wantWidth != canvas.width()) {
+	    		canvas.width( wantWidth );
+	    	}
+	    	
+	    	if (wantWidth != divContainer.width()) {
+	    		divContainer.width(wantWidth);
+	    	}
+		    
+	    	// Height can be overridden by user
+	    	var userHeight = parseInt(divContainer.data('height'), 10);
+	    	if (!isNaN(userHeight) && userHeight > 0 && userHeight < wantHeight) {
+	    		wantHeight = userHeight;
+	    	}
+		    
+		    if (divContainer.height() != wantHeight + 4) {
+		    	divContainer.height(wantHeight + 4);
+		    }
+		    if (canvas.height() != pageHeight * scale) {
+		    	canvas.height(pageHeight * scale);
+		    }
 		    
 		    
 		      var viewport = page.getViewport(scale);
@@ -123,10 +160,10 @@
     
     $.fn.pdfEmbedder.addToolbar = function(divContainer, atTop){
     	
-    	var toolbar = $('<div></div>', {class: 'pdfemb-toolbar '+(atTop ? ' pdfemb-toolbar-top' : 'pdfemb-toolbar-bottom')});
-    	var prevbtn = $('<button>Prev</button>', {class: "pdfemb-prev"});
+    	var toolbar = $('<div></div>', {'class': 'pdfemb-toolbar '+(atTop ? ' pdfemb-toolbar-top' : 'pdfemb-toolbar-bottom')});
+    	var prevbtn = $('<button>Prev</button>', {'class': "pdfemb-prev"});
     	toolbar.append(prevbtn);
-    	var nextbtn = $('<button>Next</button>', {class: "pdfemb-next"});
+    	var nextbtn = $('<button>Next</button>', {'class': "pdfemb-next"});
     	toolbar.append(nextbtn);
     	//<span>Page: <span id="page_num"></span> / <span id="page_count"></span></span></div>
     	
@@ -167,12 +204,8 @@
 		);
 
     };
- 
-}( jQuery ));
 
-// Apply plugin to relevant divs/};
-
-jQuery(document).ready(function ($) {
+    // Apply plugin to relevant divs/};
 	
 	PDFJS.workerSrc = pdfemb_trans.worker_src;
 	$('.pdfemb-viewer').pdfEmbedder();

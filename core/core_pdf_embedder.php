@@ -2,6 +2,10 @@
 
 class core_pdf_embedder {
 	
+	protected function useminified() {
+		return true;
+	}
+	
 	protected function __construct() {
 		$this->add_actions();
 		register_activation_hook($this->my_plugin_basename(), array( $this, 'pdfemb_activation_hook' ) );
@@ -27,7 +31,7 @@ class core_pdf_embedder {
 	}
 	
 	protected function get_translation_array() {
-		return Array('worker_src' => $this->my_plugin_url().'js/pdfjs/pdf.worker.js');
+		return Array('worker_src' => $this->my_plugin_url().'js/pdfjs/pdf.worker'.($this->useminified() ? '.min' : '').'.js');
 	}
 	
 	protected function get_extra_js_name() {
@@ -57,6 +61,10 @@ class core_pdf_embedder {
 		}
 	}
 	
+	protected function modify_pdfurl($url) {
+		return $url;
+	}
+	
 	/* public function pdfemb_wp_get_attachment_link( $link, $id, $size, $permalink, $icon, $text ) {
 		return $link;
 	}*/
@@ -69,7 +77,7 @@ class core_pdf_embedder {
 		
 		$this->insert_scripts();
 		
-		$width = isset($atts['width']) ? $atts['width'] : 'auto';
+		$width = isset($atts['width']) ? $atts['width'] : 'max';
 		$height = isset($atts['height']) ? $atts['height'] : 'auto';
 		
 		$extra_style = isset($atts['border']) ? "border: ".$atts['border'].";" : "border:1px solid black; ";
@@ -80,7 +88,7 @@ class core_pdf_embedder {
 			$extra_style .= "height: ".$height."px; ";
 		}
 		
-		$returnhtml = '<div class="pdfemb-viewer" data-pdf-url="'.esc_attr($url).'" style="'.esc_attr($extra_style).'" '
+		$returnhtml = '<div class="pdfemb-viewer" data-pdf-url="'.esc_attr($this->modify_pdfurl($url)).'" style="'.esc_attr($extra_style).'" '
 						.'data-width="'.esc_attr($width).'" data-height="'.esc_attr($height).'"></div>';
 		
 		if (!is_null($content)) {
@@ -280,7 +288,13 @@ class core_pdf_embedder {
 		register_setting( $this->get_options_pagename(), $this->get_options_name(), Array($this, 'pdfemb_options_validate') );
 	}
 	
+	// Override in Premium
+	public function pdfemb_init() {
+	}
+	
 	protected function add_actions() {
+
+		add_action( 'init', array($this, 'pdfemb_init') );
 		
 		add_action( 'wp_enqueue_scripts', array($this, 'pdfemb_wp_enqueue_scripts'), 5, 0 );
 		add_shortcode( 'pdf-embedder', Array($this, 'pdfemb_shortcode_display_pdf') );
