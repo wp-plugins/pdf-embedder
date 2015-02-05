@@ -11,7 +11,7 @@ jQuery(document).ready(function ($) {
 	    	
 	    	var url = divContainer.attr('data-pdf-url');
 	    	
-	    	var callback = function(pdf) {
+	    	var callback = function(pdf, showIsSecure) {
     			
 	  	    	  /**
 	  	    	   * Asynchronously downloads PDF.
@@ -21,8 +21,7 @@ jQuery(document).ready(function ($) {
 	  	    		divContainer.data('pdfDoc', pdfDoc_);
 	  	    	    //document.getElementById('page_count').textContent = this.pdfDoc.numPages;
 	  	
-	  	    	    //$.fn.pdfEmbedder.addToolbar(divContainer, true);
-	  	    	    $.fn.pdfEmbedder.addToolbar(divContainer, false);
+	  	    	    $.fn.pdfEmbedder.addToolbar(divContainer, false, showIsSecure);
 	  	    	    
 	  	    	 // Initial/first page rendering
 	  	    	    divContainer.data('pageNum', 1);
@@ -158,13 +157,18 @@ jQuery(document).ready(function ($) {
         }
       };
     
-    $.fn.pdfEmbedder.addToolbar = function(divContainer, atTop){
+    $.fn.pdfEmbedder.addToolbar = function(divContainer, atTop, showIsSecure){
     	
     	var toolbar = $('<div></div>', {'class': 'pdfemb-toolbar '+(atTop ? ' pdfemb-toolbar-top' : 'pdfemb-toolbar-bottom')});
     	var prevbtn = $('<button>Prev</button>', {'class': "pdfemb-prev"});
     	toolbar.append(prevbtn);
     	var nextbtn = $('<button>Next</button>', {'class': "pdfemb-next"});
     	toolbar.append(nextbtn);
+    	
+    	if (showIsSecure) {
+	    	toolbar.append($('<span>Secure</span>'));
+	    }
+    	
     	//<span>Page: <span id="page_num"></span> / <span id="page_count"></span></span></div>
     	
     	if (atTop) {

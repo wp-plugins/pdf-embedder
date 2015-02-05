@@ -57,6 +57,24 @@ div.pdfemb-toolbar button {
 	display: inline-block;
 }
 
+div.pdfemb-toolbar span {
+	margin: 6px 0 0 10px;
+	height: 25px;
+	font-family: sans-serif;
+	font-size: 10px;
+	padding: 5px;
+	text-align: center;
+	letter-spacing: normal;
+	word-spacing: normal;
+	line-height: 1;
+	text-transform: none;
+	text-indent: 0px;
+	text-shadow: none;
+	font-weight: normal;
+	display: inline-block;
+	color: lightgray;
+}
+
 div.pdfemb-errormsg {
 	padding: 5px;
 	text-align: center;

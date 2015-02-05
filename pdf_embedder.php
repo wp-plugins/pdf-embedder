@@ -4,7 +4,7 @@
  * Plugin Name: PDF Embedder
  * Plugin URI: http://wp-glogin.com/pdf-embedder
  * Description: Embed PDFs straight into your posts and pages, with flexible width and height. No third-party services required. 
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Dan Lester
  * Author URI: http://wp-glogin.com/
  * License: GPL3
@@ -56,6 +56,21 @@ class pdfemb_basic_pdf_embedder extends core_pdf_embedder {
 	
 	// Don't need a submit button here
 	protected function pdfemb_options_submit() {
+	}
+	
+	protected function pdfemb_mainsection_text() {
+		parent::pdfemb_mainsection_text();
+		?>
+		<h2>Protect your PDFs using PDF Embedder Secure</h2>
+		<p>Our premium PDF Embedder Secure plugin provides the same simple but elegant viewer for your website visitors, with the added protection that 
+		it is difficult for them to download or print the original PDF document.</p>
+
+		<p>This means that your PDF is unlikely to be shared outside your site where you have no control over who views, prints, or shares it.</p>
+
+		<p>See our website <a href="http://wp-pdf.com/secure/?utm_source=PDF%20Settings&utm_medium=freemium&utm_campaign=Freemium">wp-pdf.com</a> for more 
+		details and purchase options.
+		</p>
+		<?php
 	}
 	
 	// AUX

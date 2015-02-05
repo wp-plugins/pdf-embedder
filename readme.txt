@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: doc, docx, pdf, office, powerpoint, google, document, embed, intranet
 Requires at least: 3.3
 Tested up to: 4.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -18,6 +18,17 @@ The plugin has a unique method for embedding PDFs, using Javascript only, and _n
 The viewer currently has Next/Prev buttons to page through the document, and more viewer functionality will follow. There is no button to download the entire PDF (but of course a savvy user will be able to obtain the content since it is displayed to them).
 
 It uses a customized version of Mozilla's PDF.js project, but embeds it within your existing WordPress pages so we have full control over appearance. Other plugins may use similar technology, but they will insert the PDF itself into an 'iframe' which means they do not get the flexibility over sizing.
+
+= Secure PDF Embedder =
+
+**Protect your PDFs with our premium version - PDF Embedder Secure**
+
+Our premium PDF Embedder Secure plugin provides the same simple but elegant viewer for your website visitors, with the added protection that it is difficult for them to 
+download or print the original PDF document.
+
+This means that your PDF is unlikely to be shared outside your site where you have no control over who views, prints, or shares it.
+
+See our website [wp-pdf.com](http://wp-pdf.com/secure/?utm_source=PDF%20Readme&utm_medium=freemium&utm_campaign=Freemium) for more details and purchase options.
 
 = Usage =
 
@@ -39,7 +50,7 @@ Resizing works as follows:
 * If width='auto' the width will be equal to the 'natural' width of the PDF document contents (i.e. however width the PDF says it should be by default).
 * If width is a number (e.g. width='500') then it will display at that number of pixels wide.
 
-**In all cases, if the parent container is narrower than the width calculated above, then the document width will be reduced to the size of the container.**
+*In all cases, if the parent container is narrower than the width calculated above, then the document width will be reduced to the size of the container.*
 
 The height will be calculated so that the document fits naturally, given the width already calculated.
 
@@ -55,12 +66,20 @@ The height will be reduced to fit if it is larger than needed to display the doc
 
 = How can I obtain support for this product? =
 
-Please feel free to email [support@wp-glogin.com](mailto:support@wp-glogin.com) with any questions (specifying PDF Embedder in the subject).
+Please feel free to email [contact@wp-pdf.com](mailto:contact@wp-pdf.com) with any questions.
 
 Always include your full shortcode, plus links to the relevant pages, and screenshots if they would be helpful too. 
 
 We may occasionally be able to respond to support queries posted on the 'Support' forum here on the wordpress.org
 plugin page, but we recommend sending us an email instead if possible.
+
+= Can I protect my PDFs so they are difficult for viewers to download directly? =
+
+Not with the free version - it is relatively easy to find the link to download the file directly.
+
+A premium version is available that encrypts the PDF during transmission, so it is difficult for a casual user to save or print the file for use outside your site.
+
+See our website [wp-pdf.com](http://wp-pdf.com/secure/?utm_source=PDF%20Readme%20FAQ&utm_medium=freemium&utm_campaign=Freemium) for more details and purchase options.
 
 == Installation ==
 
