@@ -7,7 +7,8 @@ jQuery(document).ready(function ($) {
     	this.each(function(index, rawDivContainer) {
     	
     		var divContainer = $(rawDivContainer);
-	    	divContainer.append($('<canvas></canvas>', {'class': 'the-canvas'})); //style: 'border:1px solid black', 
+    		
+   		    divContainer.append($('<div></div>', {'class': 'pdfemb-loadingmsg'}).append(document.createTextNode('Loading...')));
 	    	
 	    	var url = divContainer.attr('data-pdf-url');
 	    	
@@ -16,17 +17,29 @@ jQuery(document).ready(function ($) {
 	  	    	  /**
 	  	    	   * Asynchronously downloads PDF.
 	  	    	   */
-
+	    		
 	  	    	  PDFJS.getDocument(pdf).then(function (pdfDoc_) {
+	  		    	divContainer.empty().append($('<canvas></canvas>', {'class': 'the-canvas'})); //style: 'border:1px solid black', 
+
 	  	    		divContainer.data('pdfDoc', pdfDoc_);
-	  	    	    //document.getElementById('page_count').textContent = this.pdfDoc.numPages;
-	  	
-	  	    	    $.fn.pdfEmbedder.addToolbar(divContainer, false, showIsSecure);
+	  	    		
+	  	    		var toolbar_location = divContainer.data('toolbar');
+
+	  	    		if (toolbar_location != 'bottom') {
+	  	    			$.fn.pdfEmbedder.addToolbar(divContainer, true, showIsSecure);
+	  	    		}
+
+	  	    		if (toolbar_location != 'top') {
+	  	    			$.fn.pdfEmbedder.addToolbar(divContainer, false, showIsSecure);
+	  	    		}
 	  	    	    
 	  	    	 // Initial/first page rendering
 	  	    	    divContainer.data('pageNum', 1);
+	  	    	    divContainer.data('pageCount', pdfDoc_.numPages);
 	  	    	    divContainer.data('pageNumPending', null);
 	  	    	    $.fn.pdfEmbedder.renderPage(divContainer, 1);
+	  	    	    
+	  	    		divContainer.find('span.pdfemb-page-count').text( pdfDoc_.numPages );
 	  	    	    
 	  	    	    $(window).resize(function() {
 	  	    	    	$.fn.pdfEmbedder.queueRenderPage(divContainer, divContainer.data('pageNum'));
@@ -136,6 +149,24 @@ jQuery(document).ready(function ($) {
 		      renderTask.promise.then(function () {
 		    	  divContainer.data('pageNum', pageNum);
 		    	  divContainer.data('pageRendering', false);
+		    	  
+		    	  // Update page counters
+		  	      divContainer.find('span.pdfemb-page-num').text( pageNum );
+		  	      
+		  	      if (pageNum < divContainer.data("pageCount")) {
+		  	    	divContainer.find('.pdfemb-next').removeAttr('disabled').removeClass('pdfemb-btndisabled');
+		  	      }
+		  	      else {
+		  	    	divContainer.find('.pdfemb-next').attr('disabled','disabled').addClass('pdfemb-btndisabled');
+		  	      }
+		  	      
+		  	      if (pageNum > 1) {
+		  	    	divContainer.find('.pdfemb-prev').removeAttr('disabled').removeClass('pdfemb-btndisabled');
+		  	      }
+		  	      else {
+		  	    	divContainer.find('.pdfemb-prev').attr('disabled','disabled').addClass('pdfemb-btndisabled');
+		  	      }
+		  	      
 			      if (divContainer.data('pageNumPending') !== null) {
 			          // New page rendering is pending
 			    	  $.fn.pdfEmbedder.renderPage(divContainer, divContainer.data('pageNumPending'));
@@ -143,9 +174,6 @@ jQuery(document).ready(function ($) {
 			      }
 		      });
 	    });
-
-	    // Update page counters
-//	    document.getElementById('page_num').textContent = pageNum;
 
     };
     
@@ -160,16 +188,16 @@ jQuery(document).ready(function ($) {
     $.fn.pdfEmbedder.addToolbar = function(divContainer, atTop, showIsSecure){
     	
     	var toolbar = $('<div></div>', {'class': 'pdfemb-toolbar '+(atTop ? ' pdfemb-toolbar-top' : 'pdfemb-toolbar-bottom')});
-    	var prevbtn = $('<button>Prev</button>', {'class': "pdfemb-prev"});
+    	var prevbtn = $('<button class="pdfemb-prev">Prev</button>');
     	toolbar.append(prevbtn);
-    	var nextbtn = $('<button>Next</button>', {'class': "pdfemb-next"});
+    	var nextbtn = $('<button class="pdfemb-next">Next</button>');
     	toolbar.append(nextbtn);
     	
+    	toolbar.append($('<div>Page <span class="pdfemb-page-num">0</span> / <span class="pdfemb-page-count"></span></div>'));
+
     	if (showIsSecure) {
-	    	toolbar.append($('<span>Secure</span>'));
+	    	toolbar.append($('<div>Secure</div>'));
 	    }
-    	
-    	//<span>Page: <span id="page_num"></span> / <span id="page_count"></span></span></div>
     	
     	if (atTop) {
     		divContainer.prepend(toolbar);
@@ -212,6 +240,8 @@ jQuery(document).ready(function ($) {
     // Apply plugin to relevant divs/};
 	
 	PDFJS.workerSrc = pdfemb_trans.worker_src;
+	PDFJS.cMapUrl = pdfemb_trans.cmap_url;
+	PDFJS.cMapPacked = true;
 	$('.pdfemb-viewer').pdfEmbedder();
 	
 });

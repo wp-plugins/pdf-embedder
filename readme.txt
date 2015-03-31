@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: doc, docx, pdf, office, powerpoint, google, document, embed, intranet
 Requires at least: 3.3
 Tested up to: 4.1
-Stable tag: 1.0.4
+Stable tag: 1.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -40,7 +40,7 @@ When you insert into your post, it will appear in the editor as a 'shortcode' as
 
 You can optionally override width and height as follows:
 
-[pdf-embedder url="https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf" width="auto"]
+[pdf-embedder url="https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf" **width="auto"**]
 
 Note the default value for width is 'max'.
 
@@ -55,7 +55,13 @@ Resizing works as follows:
 The height will be calculated so that the document fits naturally, given the width already calculated.
 
 It is possible to specify a fixed height (e.g. height="200"), in which case the document may be cut off vertically and will need to be scrolled to see the whole page. 
-The height will be reduced to fit if it is larger than needed to display the document correctly. 
+The height will be reduced to fit if it is larger than needed to display the document correctly.
+
+Toolbar Location
+
+Add toolbar="[top|bottom|both]" to the shortcode to change the location of the Next/Prev toolbar (default is 'bottom').
+
+E.g. [pdf-embedder url="https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf" **toolbar="top"**]
 
 == Screenshots ==
 
@@ -97,6 +103,16 @@ the Plugins section of your Wordpress admin
 1. Follow the instructions from step 4 above
 
 == Changelog ==
+
+= 1.2 =
+
+Fixed 'scrollbar' issues.
+
+Displays page number on toolbar ("Page 1/10").
+
+Added 'Loading...' indicator.
+
+Improved display of many PDFs (Added 'cmaps' to the distribution).
 
 = 1.0.4 =
 

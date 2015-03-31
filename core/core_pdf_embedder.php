@@ -31,7 +31,8 @@ class core_pdf_embedder {
 	}
 	
 	protected function get_translation_array() {
-		return Array('worker_src' => $this->my_plugin_url().'js/pdfjs/pdf.worker'.($this->useminified() ? '.min' : '').'.js');
+		return Array('worker_src' => $this->my_plugin_url().'js/pdfjs/pdf.worker'.($this->useminified() ? '.min' : '').'.js',
+		             'cmap_url' => $this->my_plugin_url().'js/pdfjs/cmaps/');
 	}
 	
 	protected function get_extra_js_name() {
@@ -80,7 +81,7 @@ class core_pdf_embedder {
 		$width = isset($atts['width']) ? $atts['width'] : 'max';
 		$height = isset($atts['height']) ? $atts['height'] : 'auto';
 		
-		$extra_style = isset($atts['border']) ? "border: ".$atts['border'].";" : "border:1px solid black; ";
+		$extra_style = isset($atts['border']) ? "border: ".esc_attr($atts['border']).";" : "border:1px solid black; ";
 		if (is_numeric($width)) {
 			$extra_style .= "width: ".$width."px; ";
 		}
@@ -88,8 +89,10 @@ class core_pdf_embedder {
 			$extra_style .= "height: ".$height."px; ";
 		}
 		
+		$toolbar = isset($atts['toolbar']) && in_array($atts['toolbar'], array('top', 'bottom', 'both')) ? $atts['toolbar'] : 'bottom';
+		
 		$returnhtml = '<div class="pdfemb-viewer" data-pdf-url="'.esc_attr($this->modify_pdfurl($url)).'" style="'.esc_attr($extra_style).'" '
-						.'data-width="'.esc_attr($width).'" data-height="'.esc_attr($height).'"></div>';
+						.'data-width="'.esc_attr($width).'" data-height="'.esc_attr($height).'" data-toolbar="'.$toolbar.'"></div>';
 		
 		if (!is_null($content)) {
 			$returnhtml .= do_shortcode($content);
