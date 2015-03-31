@@ -1,6 +1,6 @@
 
 div.pdfemb-viewer {
-	overflow: scroll;
+	overflow: hidden;
 	line-height: 1;
 	margin: 0px;
 	padding: 0px;

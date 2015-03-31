@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: doc, docx, pdf, office, powerpoint, google, document, embed, intranet
 Requires at least: 3.3
 Tested up to: 4.1
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -54,7 +54,7 @@ Resizing works as follows:
 
 The height will be calculated so that the document fits naturally, given the width already calculated.
 
-It is possible to specify a fixed height (e.g. height="200"), in which case the document may be cut off vertically and will need to be scrolled to see the whole page. 
+It is possible to specify a fixed height (e.g. height="200"), in which case the document may be cut off vertically. 
 The height will be reduced to fit if it is larger than needed to display the document correctly.
 
 Toolbar Location
@@ -103,6 +103,10 @@ the Plugins section of your Wordpress admin
 1. Follow the instructions from step 4 above
 
 == Changelog ==
+
+= 1.2.1 =
+
+Fixed 'scrollbars' in IE.
 
 = 1.2 =
 
